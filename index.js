@@ -6,7 +6,6 @@ const StealthPlugin  = require('puppeteer-extra-plugin-stealth');
 puppeteerExtra.use(StealthPlugin());
 const jsdom      = require('jsdom');
 
-
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: puppeteerExtra
@@ -31,7 +30,7 @@ client.on('ready', () => {
 // 3️⃣ Scrape & notify new listings without API key
 async function checkListings() {
   try {
-    const url = 'https://www.funda.nl/koop/amsterdam/'; // adjust with your filters in the URL
+    const url = 'https://www.funda.nl/koop/amsterdam/'; // adjust your filters
     const browser = await puppeteerExtra.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -43,12 +42,14 @@ async function checkListings() {
 
     const dom = new jsdom.JSDOM(html);
     const items = Array.from(dom.window.document.querySelectorAll('.search-result'));
-    const newOnes = items.map(el => {
-      const link = el.querySelector('a')?.href;
-      const title = el.querySelector('.search-result__header-title')?.textContent.trim();
-      const price = el.querySelector('.search-result__price')?.textContent.trim();
-      return { id: link, title, price, url: link };
-    }).filter(l => l.id && !seen.includes(l.id));
+    const newOnes = items
+      .map(el => {
+        const link  = el.querySelector('a')?.href;
+        const title = el.querySelector('.search-result__header-title')?.textContent.trim();
+        const price = el.querySelector('.search-result__price')?.textContent.trim();
+        return { id: link, title, price, url: link };
+      })
+      .filter(l => l.id && !seen.includes(l.id));
 
     for (let l of newOnes) {
       const msg = `🏠 *${l.title}*\nPrice: ${l.price}\n${l.url}`;
