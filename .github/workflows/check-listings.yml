@@ -20,5 +20,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Chromium prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libcups2 \
+            libx11-xcb1 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxrandr2 \
+            libgbm1 \
+            libasound2 \
+            libxshmfence1 \
+            libgtk-3-0
+
       - name: Run scraper bot
         run: node index.js

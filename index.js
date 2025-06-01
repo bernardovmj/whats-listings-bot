@@ -32,7 +32,10 @@ client.on('ready', () => {
 async function checkListings() {
   try {
     const url = 'https://www.funda.nl/koop/amsterdam/'; // adjust with your filters in the URL
-    const browser = await puppeteerExtra.launch({ headless: true });
+    const browser = await puppeteerExtra.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'domcontentloaded' });
     const html = await page.content();
